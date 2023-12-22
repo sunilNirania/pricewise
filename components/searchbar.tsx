@@ -2,7 +2,7 @@
 export const Searchbar = () => {
   return (
     <div>
-      Searchbar.
+      Searchbar will be created
     </div>
   )
 }
