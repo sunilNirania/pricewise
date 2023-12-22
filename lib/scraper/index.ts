@@ -42,7 +42,7 @@ export async function scrapeAmazonProduct(url: string){
 
         const outOfStock = $('#availability span').text().toLowerCase() === 'Currently unavailable.';
         const images = $('#imgBlkFront').attr('data-a-dynamic-image') || $('#landingImage').attr('data-a-dynamic-image') || '{}';
-        const imageUrl = Object.keys(JSON.parse(images));
+        const imageUrls = Object.keys(JSON.parse(images));
         const currency = extractCurrency($('.a-price-symbol'))
         const discountRate =$('.savingsPercentage').text().replace(/[-%]/g,'');
         const description = extractDescription($);
@@ -50,15 +50,15 @@ export async function scrapeAmazonProduct(url: string){
         const data = {
             url,
             currency: currency || '₹',
-            image: imageUrl[0],
+            image: imageUrls[0],
             title,
-            currrentPrice: Number(currentPrice),
-            originalPrice: Number(originalPrice),
+            currentPrice: Number(currentPrice) || Number(originalPrice),
+            originalPrice: Number(originalPrice) || Number(currentPrice),
             priceHistory: [],
             discountRate: Number(discountRate),
             category: 'category',
             reviewCount: 100,
-            starts: 4.5,
+            stars: 4.5,
             isOutOfStock: outOfStock,
             description,
             lowestPrice: Number(currentPrice) || Number(originalPrice),
@@ -72,6 +72,3 @@ export async function scrapeAmazonProduct(url: string){
     }
 }
 
-function extractDescreption($: cheerio.CheerioAPI) {
-    throw new Error("Function not implemented.");
-}
