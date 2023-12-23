@@ -27,13 +27,13 @@ const Home = () => {
                 Powerful, self-serve product and growth analytics to help you convert, engage, and retain more.
               </p>
 
-              <Searchbar />
+              <Searchbar /> {/*client component*/}
             </div>
 
-            <HeroCarousel />
+            <HeroCarousel /> {/*client component*/}
           </div>
       </section>
-
+    
       <section className='trending-section'>
         <h2 className="section-text">
           Trending
