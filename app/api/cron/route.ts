@@ -1,7 +1,7 @@
 
 import { NextResponse } from "next/server";
 
-import { getLowestPrice, getHighestPrice, getAveragePrice, getEmailNotifType } from "@/lib/utils";
+import { getAveragePrice, getEmailNotifType } from "@/lib/utils";
 import { connectToDB } from "@/lib/mongoose";
 import Product from "@/lib/models/product.model";
 import { scrapeAmazonProduct } from "@/lib/scraper";
@@ -37,8 +37,8 @@ export async function GET(request: Request) {
         const product = {
           ...scrapedProduct,
           priceHistory: updatedPriceHistory,
-          lowestPrice: getLowestPrice(updatedPriceHistory),
-          highestPrice: getHighestPrice(updatedPriceHistory),
+          lowestPrice: Math.min(scrapedProduct.lowestPrice,currentProduct.lowestPrice),
+          highestPrice: Math.min(scrapedProduct.highestPrice,currentProduct.highestPrice),
           averagePrice: getAveragePrice(updatedPriceHistory),
         };
 

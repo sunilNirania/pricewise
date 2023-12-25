@@ -4,10 +4,9 @@ import { revalidatePath } from "next/cache";
 import Product from "../models/product.model";
 import { connectToDB } from "../mongoose";
 import { scrapeAmazonProduct } from "../scraper";
-import { getAveragePrice, getHighestPrice, getLowestPrice } from "../utils";
+import { getAveragePrice } from "../utils";
 import { User } from "@/types";
 import { generateEmailBody, sendEmail } from "../nodemailer";
-
 
 export async function scrapeAndStoreProduct(productUrl: string){
     if(!productUrl) return;
@@ -32,8 +31,8 @@ export async function scrapeAndStoreProduct(productUrl: string){
             product = {
                 ...scrapedProduct,
                 priceHistory: updatedPriceHistory,
-                lowestPrice: getLowestPrice(updatedPriceHistory),
-                highestPrice: getHighestPrice(updatedPriceHistory),
+                lowestPrice: Math.min(scrapedProduct.lowestPrice,existingProduct.lowestPrice),
+                highestPrice: Math.max(scrapedProduct.highestPrice,existingProduct.highestPrice),
                 averagePrice: getAveragePrice(updatedPriceHistory),
             }
           }
@@ -45,7 +44,7 @@ export async function scrapeAndStoreProduct(productUrl: string){
           );
         
           revalidatePath(`/products/${newProduct._id}`);
-          return newProduct;
+          revalidatePath('/');
 
     } catch (error: any) {
         throw new Error(`Failed to create/update product: ${error.message}`);
@@ -108,11 +107,12 @@ export async function addUserEmailToProduct(productId: string, userEmail: string
     if(!userExists){
       product.users.push({email: userEmail});
       await product.save();
-      const emailContent = await generateEmailBody(product,"WELCOME");
-
-      await sendEmail(emailContent, [userEmail]);
     }
     
+    const emailContent = await generateEmailBody(product,"WELCOME");
+
+    await sendEmail(emailContent, [userEmail]);
+
   } catch (error: any) {
     console.log(error);
   }
