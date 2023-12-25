@@ -1,5 +1,6 @@
 "use client"
 import { scrapeAndStoreProduct } from "@/lib/actions"
+import { redirect } from "next/navigation"
 import { FormEvent, useState } from "react"
 
 
@@ -36,6 +37,8 @@ export const Searchbar = () => {
       setIsLoading(true)
       
        const product = await scrapeAndStoreProduct(searchPrompt)
+        redirect(`/product/${product.id}`)
+     
     } catch (error) {
       console.log(error)
     } finally {
