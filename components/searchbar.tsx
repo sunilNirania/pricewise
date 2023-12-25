@@ -37,7 +37,8 @@ export const Searchbar = () => {
       setIsLoading(true)
       
        const product = await scrapeAndStoreProduct(searchPrompt)
-        redirect(`/product/${product.id}`)
+        
+       redirect(`/product/${product._id}`)
      
     } catch (error) {
       console.log(error)
